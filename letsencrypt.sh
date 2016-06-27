@@ -25,7 +25,7 @@ BASEDIR="${SCRIPTDIR}"
 # Create (identifiable) temporary files
 _mktemp() {
   # shellcheck disable=SC2068
-  mktemp ${@:-} "${TMPDIR:-/tmp}/letsencrypt.sh-XXXXXX"
+  busybox mktemp ${@:-} "${TMPDIR:-/tmp}/letsencrypt.sh-XXXXXX"
 }
 
 # Check for script dependencies
@@ -35,7 +35,7 @@ check_dependencies() {
   _sed "" < /dev/null > /dev/null 2>&1 || _exiterr "This script requires sed with support for extended (modern) regular expressions."
   command -v grep > /dev/null 2>&1 || _exiterr "This script requires grep."
   _mktemp -u > /dev/null 2>&1 || _exiterr "This script requires mktemp."
-  diff -u /dev/null /dev/null || _exiterr "This script requires diff."
+  busybox diff -u /dev/null /dev/null || _exiterr "This script requires diff."
 
   # curl returns with an error code in some ancient versions so we have to catch that
   set +e
@@ -258,9 +258,9 @@ init_system() {
 # Different sed version for different os types...
 _sed() {
   if [[ "${OSTYPE}" = "Linux" ]]; then
-    sed -r "${@}"
+    busybox sed -r "${@}"
   else
-    sed -E "${@}"
+    busybox sed -E "${@}"
   fi
 }
 
@@ -317,13 +317,13 @@ http_request() {
 
   set +e
   if [[ "${1}" = "head" ]]; then
-    statuscode="$(curl -s -w "%{http_code}" -o "${tempcont}" "${2}" -I)"
+    statuscode="$(curl -k -s -w "%{http_code}" -o "${tempcont}" "${2}" -I)"
     curlret="${?}"
   elif [[ "${1}" = "get" ]]; then
-    statuscode="$(curl -s -w "%{http_code}" -o "${tempcont}" "${2}")"
+    statuscode="$(curl -k -s -w "%{http_code}" -o "${tempcont}" "${2}")"
     curlret="${?}"
   elif [[ "${1}" = "post" ]]; then
-    statuscode="$(curl -s -w "%{http_code}" -o "${tempcont}" "${2}" -d "${3}")"
+    statuscode="$(curl -k -s -w "%{http_code}" -o "${tempcont}" "${2}" -d "${3}")"
     curlret="${?}"
   else
     set -e
@@ -645,7 +645,7 @@ command_sign_domains() {
   # Generate certificates for all domains found in domains.txt. Check if existing certificate are about to expire
   ORIGIFS="${IFS}"
   IFS=$'\n'
-  for line in $(<"${DOMAINS_TXT}" tr -d '\r' | tr '[:upper:]' '[:lower:]' | _sed -e 's/^[[:space:]]*//g' -e 's/[[:space:]]*$//g' -e 's/[[:space:]]+/ /g' | (grep -vE '^(#|$)' || true)); do
+  for line in $(<"${DOMAINS_TXT}" tr -d '\r' | busybox tr '[:upper:]' '[:lower:]' | _sed -e 's/^[[:space:]]*//g' -e 's/[[:space:]]*$//g' -e 's/[[:space:]]+/ /g' | (busybox grep -vE '^(#|$)' || true)); do
     reset_configvars
     IFS="${ORIGIFS}"
     domain="$(printf '%s\n' "${line}" | cut -d' ' -f1)"
