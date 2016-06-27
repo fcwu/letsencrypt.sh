@@ -1,10 +1,10 @@
-# QNAP letsencrypt.sh [![Build Status](https://travis-ci.org/lukas2511/letsencrypt.sh.svg?branch=master)](https://travis-ci.org/lukas2511/letsencrypt.sh)
+# QNAP letsencrypt.sh 
 
 The original repo is [letsencrypt.sh](https://github.com/lukas2511/letsencrypt.sh)
 
 # Getting started
 
-*Note your domain must be reachable from port 80, such as http://your.domain/. Replace your.domain to your REAL domain*
+**NOTE: your domain must be reachable from port 80, such as http://your.domain/. Replace your.domain to your REAL domain**
 
 ```
 [~] # curl -Lk https://github.com/fcwu/letsencrypt.sh/raw/master/letsencrypt.sh > letsencrypt.sh
