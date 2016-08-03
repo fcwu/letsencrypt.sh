@@ -8,9 +8,10 @@ The original repo is [letsencrypt.sh](https://github.com/lukas2511/letsencrypt.s
 
 ```
 [~] # curl -Lk https://github.com/fcwu/letsencrypt.sh/raw/master/letsencrypt.sh > letsencrypt.sh
+[~] # export domain=your.domain
 [~] # chmod +x letsencrypt.sh
 [~] # cat <<EOF > domains.txt
-> your.domain
+> ${domain}
 > EOF
 [~] echo "WELLKNOWN=/share/Web/.well-known/acme-challenge" > config
 [~] bash -c "source config && mkdir -p \${WELLKNOWN}"
@@ -29,6 +30,6 @@ Processing your.domain
  + Done!
  + Creating fullchain.pem...
  + Done!
-[~] # cat certs/your.domain/privkey.pem certs/your.domain/cert.pem > /etc/stunnel/stunnel.pem
+[~] # cat cert/${domain}/privkey.pem cert/${domain}/cert.pem > /etc/stunnel/stunnel.pem
 [~] # /etc/init.d/stunnel.sh reload_apache
 ```
